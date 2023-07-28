@@ -1,0 +1,67 @@
+import random
+
+map_data = {
+    'Territory1': ['Territory2', 'Territory3'],
+    'Territory2': ['Territory1', 'Territory3', 'Territory4'],
+    'Territory3': ['Territory1', 'Territory2', 'Territory4', 'Territory5'],
+    'Territory4': ['Territory2', 'Territory3', 'Territory5'],
+    'Territory5': ['Territory3', 'Territory4']
+}
+
+players = ['Player1', 'Player2']
+
+territories = {
+    'Territory1': {'owner': None, 'armies': 0},
+    'Territory2': {'owner': None, 'armies': 0},
+    'Territory3': {'owner': None, 'armies': 0},
+    'Territory4': {'owner': None, 'armies': 0},
+    'Territory5': {'owner': None, 'armies': 0}
+}
+
+def place_initial_armies():
+    total_armies = 10
+    territories_list = list(territories.keys())
+    random.shuffle(territories_list)
+    for i, player in enumerate(players):
+        territories[territories_list[i]]['owner'] = player
+        territories[territories_list[1]]['armies'] = total_armies // len(players)
+
+def print_game_state():
+    print("\nCurrent Game State:")
+    for territory, data in territories.items():
+        print(f"{territory} - Owner: {data['owner']}, Armies: {data['armies']}")
+
+def attack(attacker, defender, attacking_armies):
+    print(f"{attacker} attacks {defender} with {attacking_armies} armies!")
+
+def main():
+    place_initial_armies()
+    current_player_idx = 0
+
+    while True:
+        current_player = players[current_player_idx]
+        print_game_state()
+
+        if all(data['owner'] == current_player for data in territories.values()):
+            print(f"\nCongratulations, {current_player}! You have conquered the world!")
+            break
+
+        action = input(f"\n{current_player}, choose your action (a- Attack, e - End turn): ").lower()
+
+        if action == 'a':
+            attacker = input("Enter the territory you want to attack from: ")
+            defender = input("Enter the territory you want to attack: ")
+            attacking_armies = int(input("Enter the number of armies to attack with: "))
+
+            attack(attacker, defender, attacking_armies)
+
+        elif action == 'e':
+            current_player_idx = (current_player_idx + 1) % len(players)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nGame terminated by the user")
+    except Exception as e:
+        print(f"An error occurred: {e}")
